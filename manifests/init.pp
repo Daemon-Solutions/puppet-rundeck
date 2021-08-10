@@ -275,7 +275,7 @@ class rundeck (
   String $rdeck_override_template                               = 'rundeck/profile_overrides.erb',
   String $realm_template                                        = $rundeck::params::realm_template,
   Stdlib::HTTPUrl $repo_yum_source                              = $rundeck::params::repo_yum_source,
-  String $repo_yum_gpgkey                                       = $rundeck::params::repo_yum_gpgkey,
+  String $repo_yum_key                                          = $rundeck::params::repo_yum_gpgkey,
   String $repo_gpgcheck                                         = $rundeck::params::repo_gpgcheck,
   Stdlib::HTTPUrl $repo_apt_source                              = $rundeck::params::repo_apt_source,
   String $repo_apt_key_id                                       = $rundeck::params::repo_apt_key_id,
