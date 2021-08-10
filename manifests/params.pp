@@ -14,6 +14,7 @@ class rundeck::params {
   $manage_repo = true
   $repo_yum_source = 'https://packagecloud.io/pagerduty/rundeck/rpm_any/rpm_any/$basearch'
   $repo_yum_gpgkey = 'https://packagecloud.io/pagerduty/rundeck/gpgkey'
+  $repo_gpgcheck   = '1'
   $repo_apt_source = 'https://packagecloud.io/pagerduty/rundeck/any'
   $repo_apt_key_id = '0DDD2FA79B15D736ECEA32B89B5206167C5C34C0'
   $repo_apt_gpgkey = 'https://packagecloud.io/pagerduty/rundeck/gpgkey'

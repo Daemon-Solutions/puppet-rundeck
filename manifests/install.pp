@@ -13,6 +13,7 @@ class rundeck::install {
   $package_ensure     = $rundeck::package_ensure
   $repo_yum_source    = $rundeck::repo_yum_source
   $repo_yum_gpgkey    = $rundeck::repo_yum_gpgkey
+  $repo_gpgcheck      = $$rundeck::repo_gpgcheck
   $repo_apt_source    = $rundeck::repo_apt_source
   $repo_apt_key_id    = $rundeck::repo_apt_key_id
   $repo_apt_keyserver = $rundeck::repo_apt_keyserver
@@ -63,7 +64,7 @@ class rundeck::install {
           enabled       => '1',
           gpgcheck      => '0',
           gpgkey        => $repo_yum_gpgkey,
-          repo_gpgcheck => '1',
+          repo_gpgcheck => $repo_gpgcheck,
           priority      => '1',
           before        => Package['rundeck'],
         }
