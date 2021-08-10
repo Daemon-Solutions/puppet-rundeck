@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v5.4.1](https://github.com/Daemon-Solutions/puppet-rundeck/tree/v5.4.1) (2021-08-10)
+
 ## [v5.3.1](https://github.com/voxpupuli/puppet-rundeck/tree/v5.3.1) (2018-08-20)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-rundeck/compare/v5.3.0...v5.3.1)

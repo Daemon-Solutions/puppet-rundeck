@@ -13,6 +13,7 @@ class rundeck::params {
   $service_name = 'rundeckd'
   $manage_repo = true
   $repo_yum_source = 'http://dl.bintray.com/rundeck/rundeck-rpm/'
+  $repo_gpgcheck   = '1'
   $repo_yum_gpgkey = 'https://bintray.com/user/downloadSubjectPublicKey?username=rundeck'
   $repo_apt_source = 'https://dl.bintray.com/rundeck/rundeck-deb'
   $repo_apt_key_id = '8756C4F765C9AC3CB6B85D62379CE192D401AB61'
