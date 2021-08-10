@@ -46,6 +46,10 @@
 #
 # URL or path for the GPG key for the rpm
 #
+# [*repo_gpgcheck*]
+#
+# Enable/Disable GPG checks
+#
 # [*repo_yum_source*]
 #
 # Baseurl for the yum repo
@@ -272,6 +276,7 @@ class rundeck (
   String $realm_template                                        = $rundeck::params::realm_template,
   Stdlib::HTTPUrl $repo_yum_source                              = $rundeck::params::repo_yum_source,
   String $repo_yum_gpgkey                                       = $rundeck::params::repo_yum_gpgkey,
+  String $repo_gpgcheck                                         = $rundeck::params::repo_gpgcheck,
   Stdlib::HTTPUrl $repo_apt_source                              = $rundeck::params::repo_apt_source,
   String $repo_apt_key_id                                       = $rundeck::params::repo_apt_key_id,
   Stdlib::Httpsurl $repo_apt_gpgkey                             = $rundeck::params::repo_apt_gpgkey,
