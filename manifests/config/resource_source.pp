@@ -9,6 +9,8 @@
 #
 # === Parameters
 #
+# [*assume_role_arn*]
+#   When using the aws-ec2 source_type, this specifies the assume role ARN parameter.
 # [*directory*]
 #   When the directory source_type is specified this is the path to that directory.
 #
@@ -75,7 +77,7 @@
 #   resource_format     => 'resourceyaml',
 # }
 #
-define rundeck::config::resource_source(
+define rundeck::config::resource_source (
   Stdlib::Absolutepath $directory                                = $rundeck::params::default_resource_dir,
   Boolean $include_server_node                                   = $rundeck::params::include_server_node,
   String $mapping_params                                         = '',
@@ -93,11 +95,12 @@ define rundeck::config::resource_source(
   Integer $url_timeout                                           = $rundeck::params::url_timeout,
   Boolean $use_default_mapping                                   = true,
   Optional[String] $endpoint_url                                 = undef,
+  Optional[String[1]] $assume_role_arn                           = undef,
   String $filter_tag                                             = '',
-  Integer $http_proxy_port                                       = $rundeck::params::default_http_proxy_port,
+  Stdlib::Port $http_proxy_port                                  = $rundeck::params::default_http_proxy_port,
   Integer $refresh_interval                                      = $rundeck::params::default_refresh_interval,
   Optional[String] $puppet_enterprise_host                       = undef,
-  Optional[Integer[0,65535]] $puppet_enterprise_port             = undef,
+  Optional[Stdlib::Port] $puppet_enterprise_port                 = undef,
   Optional[Stdlib::Absolutepath] $puppet_enterprise_ssl_dir      = undef,
   Optional[String] $puppet_enterprise_certificate_name           = undef,
   Optional[Stdlib::Absolutepath] $puppet_enterprise_mapping_file = undef,
@@ -106,10 +109,9 @@ define rundeck::config::resource_source(
   Optional[String] $puppet_enterprise_default_node_tag           = undef,
   Optional[String] $puppet_enterprise_tag_source                 = undef,
 ) {
-
   include rundeck
 
-  $framework_properties = deep_merge($rundeck::params::framework_config, $::rundeck::framework_config)
+  $framework_properties = deep_merge($rundeck::params::framework_config, $rundeck::framework_config)
 
   $projects_dir = $framework_properties['framework.projects.dir']
   $user = $rundeck::user
@@ -122,16 +124,16 @@ define rundeck::config::resource_source(
   assert_type(Stdlib::Absolutepath, $projects_dir)
 
   ensure_resource('file', "${projects_dir}/${project_name}", {
-    'ensure' => 'directory',
-    'owner'  => $user,
-    'group'  => $group
-  } )
+      'ensure' => 'directory',
+      'owner'  => $user,
+      'group'  => $group
+  })
   ensure_resource('file', "${projects_dir}/${project_name}/etc", {
-    'ensure'  => 'directory',
-    'owner'   => $user,
-    'group'   => $group,
-    'require' => File["${projects_dir}/${project_name}"]
-  } )
+      'ensure'  => 'directory',
+      'owner'   => $user,
+      'group'   => $group,
+      'require' => File["${projects_dir}/${project_name}"]
+  })
 
   $properties_dir  = "${projects_dir}/${project_name}/etc"
   $properties_file = "${properties_dir}/project.properties"
@@ -207,7 +209,6 @@ define rundeck::config::resource_source(
       }
     }
     'url': {
-
       ini_setting { "${name}::resources.source.${number}.config.url":
         ensure  => present,
         path    => $properties_file,
@@ -236,7 +237,6 @@ define rundeck::config::resource_source(
       }
     }
     'directory': {
-
       file { $directory:
         ensure => directory,
         owner  => $user,
@@ -254,7 +254,6 @@ define rundeck::config::resource_source(
       }
     }
     'script': {
-
       ini_setting { "${name}::resources.source.${number}.config.file":
         ensure  => present,
         path    => $properties_file,
@@ -331,6 +330,14 @@ define rundeck::config::resource_source(
         section => '',
         setting => "resources.source.${number}.config.endpoint",
         value   => $endpoint_url,
+        require => File[$properties_file],
+      }
+      ini_setting { "${name}::resources.source.${number}.config.assumeRoleArn":
+        ensure  => present,
+        path    => $properties_file,
+        section => '',
+        setting => "resources.source.${number}.config.assumeRoleArn",
+        value   => $assume_role_arn,
         require => File[$properties_file],
       }
       ini_setting { "${name}::resources.source.${number}.config.filter":

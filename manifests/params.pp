@@ -9,17 +9,18 @@
 #
 class rundeck::params {
   $package_name = 'rundeck'
-  $package_ensure = '2.11.5'
+  $package_ensure = 'installed'
   $service_name = 'rundeckd'
   $manage_repo = true
-  $repo_yum_source = 'http://dl.bintray.com/rundeck/rundeck-rpm/'
+  $repo_yum_source = 'https://packagecloud.io/pagerduty/rundeck/rpm_any/rpm_any/$basearch'
+  $repo_yum_gpgkey = 'https://packagecloud.io/pagerduty/rundeck/gpgkey'
   $repo_gpgcheck   = '1'
-  $repo_yum_gpgkey = 'https://bintray.com/user/downloadSubjectPublicKey?username=rundeck'
-  $repo_apt_source = 'https://dl.bintray.com/rundeck/rundeck-deb'
-  $repo_apt_key_id = '8756C4F765C9AC3CB6B85D62379CE192D401AB61'
+  $repo_apt_source = 'https://packagecloud.io/pagerduty/rundeck/any'
+  $repo_apt_key_id = '0DDD2FA79B15D736ECEA32B89B5206167C5C34C0'
+  $repo_apt_gpgkey = 'https://packagecloud.io/pagerduty/rundeck/gpgkey'
   $repo_apt_keyserver = 'keyserver.ubuntu.com'
 
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian': {
       $overrides_dir = '/etc/default'
     }
@@ -27,7 +28,7 @@ class rundeck::params {
       $overrides_dir = '/etc/sysconfig'
     }
     default: {
-      fail("${::operatingsystem} not supported")
+      fail("${facts['os']['name']} not supported")
     }
   }
 
@@ -39,17 +40,11 @@ class rundeck::params {
   $manage_home = true
   $service_logs_dir = '/var/log/rundeck'
 
-  $rdeck_uuid = $facts['serialnumber'] ? {
-    '0'     => fqdn_uuid($::fqdn),
-    undef   => fqdn_uuid($::fqdn),
-    default => $facts['serialnumber'],
-  }
-
   $framework_config = {
-    'framework.server.name'     => $::fqdn,
-    'framework.server.hostname' => $::fqdn,
+    'framework.server.name'     => $facts['networking']['fqdn'],
+    'framework.server.hostname' => $facts['networking']['fqdn'],
     'framework.server.port'     => '4440',
-    'framework.server.url'      => "http://${::fqdn}:4440",
+    'framework.server.url'      => "http://${facts['networking']['fqdn']}:4440",
     'framework.server.username' => 'admin',
     'framework.server.password' => 'admin',
     'rdeck.base'                => '/var/lib/rundeck',
@@ -62,7 +57,7 @@ class rundeck::params {
     'framework.ssh.keypath'     => '/var/lib/rundeck/.ssh/id_rsa',
     'framework.ssh.user'        => 'rundeck',
     'framework.ssh.timeout'     => '0',
-    'rundeck.server.uuid'       => $rdeck_uuid,
+    'rundeck.server.uuid'       => fqdn_uuid($facts['networking']['fqdn']),
   }
 
   $auth_types = ['file']
@@ -82,20 +77,20 @@ class rundeck::params {
       },
       'for' => {
         'resource' => [
-          {'allow' => '*'},
+          { 'allow' => '*' },
         ],
         'adhoc' => [
-          {'allow' => '*'},
+          { 'allow' => '*' },
         ],
         'job' => [
-          {'allow' => '*'},
+          { 'allow' => '*' },
         ],
         'node' => [
-          {'allow' => '*'},
+          { 'allow' => '*' },
         ],
       },
       'by' => [{
-        'group' => ['admin']
+          'group' => ['admin']
       }]
     },
     {
@@ -105,17 +100,17 @@ class rundeck::params {
       },
       'for' => {
         'resource' => [
-          {'allow' => '*'},
+          { 'allow' => '*' },
         ],
         'project' => [
-          {'allow' => '*'},
+          { 'allow' => '*' },
         ],
         'storage' => [
-          {'allow' => '*'},
+          { 'allow' => '*' },
         ],
       },
       'by' => [{
-        'group' => ['admin']
+          'group' => ['admin']
       }]
     }
   ]
@@ -128,22 +123,22 @@ class rundeck::params {
       },
       'for' => {
         'resource' => [
-          { 'equals' => {'kind' => 'job'}, 'allow' => ['create','delete'] },
-          { 'equals' => {'kind' => 'node'}, 'allow' => ['read','create','update','refresh'] },
-          { 'equals' => {'kind' => 'event'}, 'allow' => ['read','create'] }
+          { 'equals' => { 'kind' => 'job' }, 'allow' => ['create','delete'] },
+          { 'equals' => { 'kind' => 'node' }, 'allow' => ['read','create','update','refresh'] },
+          { 'equals' => { 'kind' => 'event' }, 'allow' => ['read','create'] }
         ],
         'adhoc' => [
-          {'allow' => ['read','run','kill']}
+          { 'allow' => ['read','run','kill'] }
         ],
         'job' => [
-          {'allow' => ['create','read','update','delete','run','kill']}
+          { 'allow' => ['create','read','update','delete','run','kill'] }
         ],
         'node' => [
-          {'allow' => ['read','run']}
+          { 'allow' => ['read','run'] }
         ],
       },
       'by' => [{
-        'group' => ['api_token_group']
+          'group' => ['api_token_group']
       }]
     },
     {
@@ -153,17 +148,17 @@ class rundeck::params {
       },
       'for' => {
         'resource' => [
-          { 'equals' => {'kind' => 'system'}, 'allow' => ['read'] }
+          { 'equals' => { 'kind' => 'system' }, 'allow' => ['read'] }
         ],
         'project' => [
-          { 'match' => {'name' => '.*'}, 'allow' => ['read'] }
+          { 'match' => { 'name' => '.*' }, 'allow' => ['read'] }
         ],
         'storage' => [
-          { 'match' => {'path' => '(keys|keys/.*)'}, 'allow' => '*' },
+          { 'match' => { 'path' => '(keys|keys/.*)' }, 'allow' => '*' },
         ],
       },
       'by' => [{
-        'group' => ['api_token_group']
+          'group' => ['api_token_group']
       }]
     }
   ]
@@ -259,13 +254,14 @@ class rundeck::params {
 
   $user = 'rundeck'
   $group = 'rundeck'
+  $file_default_mode = '0640'
 
   $loglevel = 'INFO'
   $rss_enabled = false
 
   $clustermode_enabled = false
 
-  $grails_server_url = "http://${::fqdn}:4440"
+  $grails_server_url = "http://${facts['networking']['fqdn']}:4440"
 
   $database_config = {
     'type'            => 'h2',
@@ -319,7 +315,7 @@ class rundeck::params {
 
   $rdeck_config_template = 'rundeck/rundeck-config.erb'
 
-  $file_keystorage_keys = { }
+  $file_keystorage_keys = {}
   $file_keystorage_dir = "${framework_config['framework.var.dir']}/storage"
 
   $manage_default_admin_policy = true
@@ -327,5 +323,4 @@ class rundeck::params {
 
   $security_roles_array_enabled = false
   $security_roles_array         = []
-
 }

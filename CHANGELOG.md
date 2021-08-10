@@ -6,6 +6,8 @@ These should not affect the functionality of the module.
 
 ## [v5.4.1](https://github.com/Daemon-Solutions/puppet-rundeck/tree/v5.4.1) (2021-08-10)
 
+## [v5.4.0](https://github.com/voxpupuli/puppet-rundeck/tree/v5.4.0) (2018-10-18)
+
 ## [v5.3.1](https://github.com/voxpupuli/puppet-rundeck/tree/v5.3.1) (2018-08-20)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-rundeck/compare/v5.3.0...v5.3.1)

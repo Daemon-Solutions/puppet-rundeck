@@ -5,16 +5,16 @@
 # puppet module install puppetlabs-java
 # puppet module install puppet-rundeck
 # puppet module install crayfishx-firewalld
-# - $::fqdn fact needs to be working
+# - $facts['fqdn'] fact needs to be working
 #
 # After installation:
-# - Webinterface on http://${::fqdn}:4440
+# - Webinterface on http://${facts['fqdn']}:4440
 # - Login with admin/admin
 #
 
-include ::java
-include ::rundeck
-include ::firewalld
+include java
+include rundeck
+include firewalld
 
 firewalld_port { 'Rundeck HTTP port':
   ensure   => present,
@@ -24,4 +24,3 @@ firewalld_port { 'Rundeck HTTP port':
 }
 
 Class['java'] -> Class['rundeck']
-

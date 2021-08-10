@@ -1,5 +1,3 @@
-# rubocop:disable RSpec/MultipleExpectations
-
 require 'spec_helper'
 
 describe 'rundeck' do
@@ -62,6 +60,17 @@ describe 'rundeck' do
         let(:params) { { rdeck_profile_template: template } }
 
         it { is_expected.to contain_file('/etc/rundeck/profile') }
+      end
+
+      describe 'rundeck::config with rdeck_override_template set' do
+        template = 'rundeck/../spec/fixtures/files/override.template'
+        let(:params) { { rdeck_override_template: template } }
+
+        it { is_expected.to contain_file(overrides) }
+        it 'uses the content for the profile overrides template' do
+          content = catalogue.resource('file', overrides)[:content]
+          expect(content).to include('test override template')
+        end
       end
 
       describe 'rundeck::config with jvm_args set' do
